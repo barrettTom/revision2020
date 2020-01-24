@@ -1,0 +1,10 @@
+[package]
+name = "working-title"
+version = "0.1.0"
+authors = ["Tom Barrett <tom@tombarrett.xyz>"]
+edition = "2018"
+
+[dependencies]
+luminance = "0.38"
+luminance-derive = "0.5.2"
+luminance-glfw = "0.12"
