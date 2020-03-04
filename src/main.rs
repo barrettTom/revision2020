@@ -1,14 +1,16 @@
 pub mod constants;
+pub mod n1ck;
 pub mod tom;
+pub mod vertex;
 
 use luminance::context::GraphicsContext;
 use luminance::pipeline::{PipelineState, Viewport};
-use luminance::render_state::RenderState;
 use luminance::shader::program::Program;
-use luminance::tess::{Mode, TessBuilder, TessSliceIndex};
-use luminance_derive::{Semantics, Vertex};
 use luminance_glfw::{GlfwSurface, Surface, WindowDim, WindowEvent, WindowOpt};
-use tom::{Tom, VertexSemantics};
+
+use n1ck::N1ck;
+use tom::Tom;
+use vertex::VertexSemantics;
 
 fn gen_viewports() -> Vec<Viewport> {
     let mut viewports = Vec::new();
@@ -45,7 +47,7 @@ fn gen_viewports() -> Vec<Viewport> {
 }
 
 fn main() {
-    let mut surface = GlfwSurface::new(
+    let surface = GlfwSurface::new(
         WindowDim::Windowed(constants::WIDTH, constants::HEIGHT),
         "revision2020",
         WindowOpt::default(),
@@ -57,7 +59,9 @@ fn main() {
             .unwrap()
             .ignore_warnings();
 
-    let mut tom = Tom::new();
+    let (mut tom, surface) = Tom::new(surface);
+    let (mut n1ck, mut surface) = N1ck::new(surface);
+
     let viewports = gen_viewports();
 
     let mut run = true;
@@ -67,10 +71,11 @@ fn main() {
                 run = false;
             }
         }
+
+        surface = tom.update(surface);
+        surface = n1ck.update(surface);
+
         let back_buffer = surface.back_buffer().unwrap();
-
-        tom.update();
-
         let mut pipeline_state = PipelineState::default();
         surface
             .pipeline_builder()
@@ -81,9 +86,13 @@ fn main() {
             pipeline_state = pipeline_state.enable_clear_color(false);
 
             if i == 0 {
-                tom.draw();
+                surface = tom.draw(surface, &back_buffer, &program, &pipeline_state);
             } else if i == 1 {
-                // lowman.draw()
+                surface = n1ck.draw(surface, &back_buffer, &program, &pipeline_state);
+            } else if i == 2 {
+                surface = tom.draw(surface, &back_buffer, &program, &pipeline_state);
+            } else if i == 3 {
+                surface = n1ck.draw(surface, &back_buffer, &program, &pipeline_state);
             }
         }
 

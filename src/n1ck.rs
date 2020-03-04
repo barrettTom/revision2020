@@ -29,19 +29,19 @@ fn gen_vertices() -> Vec<Vertex> {
 
 fn alter_vertices(vertices: &mut Vec<Vertex>) {
     for vertex in vertices {
-        if vertex.color[0] < 255 {
-            vertex.color[0] += 1;
+        if vertex.color[1] < 255 {
+            vertex.color[1] += 1;
         }
     }
 }
 
-pub struct Tom {
+pub struct N1ck {
     vertices: Vec<Vertex>,
     tessalation: Tess,
 }
 
-impl Tom {
-    pub fn new<T: GraphicsContext>(mut surface: T) -> (Tom, T) {
+impl N1ck {
+    pub fn new<T: GraphicsContext>(mut surface: T) -> (N1ck, T) {
         let vertices = gen_vertices();
         let tessalation = TessBuilder::new(&mut surface)
             .add_vertices(&vertices)
@@ -50,7 +50,7 @@ impl Tom {
             .unwrap();
 
         (
-            Tom {
+            N1ck {
                 vertices,
                 tessalation,
             },
