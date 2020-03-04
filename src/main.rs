@@ -1,3 +1,4 @@
+pub mod audio;
 pub mod constants;
 pub mod n1ck;
 pub mod tom;
@@ -58,6 +59,10 @@ fn main() {
         Program::from_strings(None, include_str!("vs.glsl"), None, include_str!("fs.glsl"))
             .unwrap()
             .ignore_warnings();
+
+    // only uncomment if building as release 'cargo run --release'
+    //let mut stream = audio::init();
+    //stream.play();
 
     let (mut tom, surface) = Tom::new(surface);
     let (mut n1ck, mut surface) = N1ck::new(surface);
