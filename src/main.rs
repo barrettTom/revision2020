@@ -48,7 +48,7 @@ fn gen_viewports() -> Vec<Viewport> {
 }
 
 fn main() {
-    let surface = GlfwSurface::new(
+    let mut surface = GlfwSurface::new(
         WindowDim::Windowed(constants::WIDTH, constants::HEIGHT),
         "revision2020",
         WindowOpt::default(),
@@ -64,8 +64,8 @@ fn main() {
     //let mut stream = audio::init();
     //stream.play();
 
-    let (mut tom, surface) = Tom::new(surface);
-    let (mut n1ck, mut surface) = N1ck::new(surface);
+    let mut tom = Tom::new();
+    let mut n1ck = N1ck::new();
 
     let viewports = gen_viewports();
 
@@ -90,13 +90,9 @@ fn main() {
             pipeline_state = pipeline_state.set_viewport(*viewport);
             pipeline_state = pipeline_state.enable_clear_color(false);
 
-            if i == 0 {
+            if i == 0 || i == 3 {
                 surface = tom.draw(surface, &back_buffer, &program, &pipeline_state);
-            } else if i == 1 {
-                surface = n1ck.draw(surface, &back_buffer, &program, &pipeline_state);
-            } else if i == 2 {
-                surface = tom.draw(surface, &back_buffer, &program, &pipeline_state);
-            } else if i == 3 {
+            } else if i == 1 || i == 2 {
                 surface = n1ck.draw(surface, &back_buffer, &program, &pipeline_state);
             }
         }

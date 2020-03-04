@@ -35,37 +35,34 @@ fn alter_vertices(vertices: &mut Vec<Vertex>) {
     }
 }
 
+#[derive(Default)]
 pub struct N1ck {
     vertices: Vec<Vertex>,
-    tessalation: Tess,
+    tessalations: Vec<Tess>,
 }
 
 impl N1ck {
-    pub fn new<T: GraphicsContext>(mut surface: T) -> (N1ck, T) {
+    pub fn new() -> N1ck {
         let vertices = gen_vertices();
-        let tessalation = TessBuilder::new(&mut surface)
-            .add_vertices(&vertices)
-            .set_mode(Mode::Triangle)
-            .build()
-            .unwrap();
+        let tessalations = Vec::new();
 
-        (
-            N1ck {
-                vertices,
-                tessalation,
-            },
-            surface,
-        )
+        N1ck {
+            vertices,
+            tessalations,
+        }
     }
 
     pub fn update<T: GraphicsContext>(&mut self, mut surface: T) -> T {
         alter_vertices(&mut self.vertices);
 
-        self.tessalation = TessBuilder::new(&mut surface)
-            .add_vertices(&self.vertices)
-            .set_mode(Mode::Triangle)
-            .build()
-            .unwrap();
+        self.tessalations.clear();
+        self.tessalations.push(
+            TessBuilder::new(&mut surface)
+                .add_vertices(&self.vertices)
+                .set_mode(Mode::Triangle)
+                .build()
+                .unwrap(),
+        );
 
         surface
     }
@@ -83,7 +80,9 @@ impl N1ck {
             |_pipeline, mut shd_gate| {
                 shd_gate.shade(&program, |_, mut rdr_gate| {
                     rdr_gate.render(&RenderState::default(), |mut tess_gate| {
-                        tess_gate.render(self.tessalation.slice(..));
+                        for tessalation in self.tessalations.iter() {
+                            tess_gate.render(tessalation.slice(..));
+                        }
                     });
                 });
             },
