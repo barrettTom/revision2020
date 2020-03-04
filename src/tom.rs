@@ -1,3 +1,5 @@
+use std::f32::consts::PI;
+
 use luminance::context::GraphicsContext;
 use luminance::framebuffer::Framebuffer;
 use luminance::pipeline::PipelineState;
@@ -49,26 +51,56 @@ fn gen_border() -> Vec<Vec<Vertex>> {
     vertices
 }
 
+fn relative(x: f32, in_min: f32, in_max: f32, out_min: f32, out_max: f32) -> f32 {
+    (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
+}
+
+fn gen_sin(start: f32) -> Vec<Vertex> {
+    let mut vertices: Vec<Vertex> = Vec::new();
+
+    let end = start + (2.0 * PI);
+    let mut x = start;
+    while x < end {
+        vertices.push(Vertex {
+            position: VertexPosition::new([relative(x, start, end, -0.9, 0.9), x.sin() * 0.9]),
+            color: VertexRGB::new(constants::C64_GREEN),
+        });
+
+        x += 0.4;
+    }
+
+    vertices
+}
+
 #[derive(Default)]
 pub struct Tom {
-    vertices: Vec<Vec<Vertex>>,
+    border: Vec<Vec<Vertex>>,
+    wave: Vec<Vertex>,
+    last_input: f32,
     tessalations: Vec<Tess>,
 }
 
 impl Tom {
     pub fn new() -> Tom {
-        let vertices = gen_border();
+        let border = gen_border();
+        let wave = gen_sin(0.0);
         let tessalations = Vec::new();
 
         Tom {
-            vertices,
+            border,
+            wave,
+            last_input: 0.0,
             tessalations,
         }
     }
 
     pub fn update<T: GraphicsContext>(&mut self, mut surface: T) -> T {
         self.tessalations.clear();
-        for vertices in self.vertices.iter() {
+
+        self.last_input += 0.1;
+        self.wave = gen_sin(self.last_input);
+
+        for vertices in self.border.iter() {
             self.tessalations.push(
                 TessBuilder::new(&mut surface)
                     .add_vertices(vertices)
@@ -77,6 +109,14 @@ impl Tom {
                     .unwrap(),
             );
         }
+
+        self.tessalations.push(
+            TessBuilder::new(&mut surface)
+                .add_vertices(&self.wave)
+                .set_mode(Mode::LineStrip)
+                .build()
+                .unwrap(),
+        );
 
         surface
     }
