@@ -10,3 +10,6 @@ luminance-derive = "0.5.3"
 luminance-glfw = "0.12.1"
 alto = "3.0.4"
 lewton = "0.10.0"
+
+[profile.dev]
+opt-level = 2

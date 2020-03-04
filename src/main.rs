@@ -1,9 +1,10 @@
-pub mod audio;
 pub mod constants;
+pub mod audio;
+pub mod vertex;
 pub mod n1ck;
 pub mod tom;
-pub mod vertex;
 
+use alto::Source;
 use luminance::context::GraphicsContext;
 use luminance::pipeline::{PipelineState, Viewport};
 use luminance::shader::program::Program;
@@ -60,9 +61,8 @@ fn main() {
             .unwrap()
             .ignore_warnings();
 
-    // only uncomment if building as release 'cargo run --release'
-    //let mut stream = audio::init();
-    //stream.play();
+    let mut stream = audio::init();
+    stream.play();
 
     let mut tom = Tom::new();
     let mut n1ck = N1ck::new();

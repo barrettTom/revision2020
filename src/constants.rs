@@ -17,3 +17,5 @@ pub const C64_GREY: [u8; 3] = [119, 119, 119];
 pub const C64_LIGHT_GREEN: [u8; 3] = [170, 255, 102];
 pub const C64_LIGHT_BLUE: [u8; 3] = [0, 136, 255];
 pub const C64_LIGHT_GREY: [u8; 3] = [187, 187, 187];
+
+pub const VOLUME: f32 = 0.02;
