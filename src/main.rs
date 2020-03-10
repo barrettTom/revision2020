@@ -1,8 +1,8 @@
-pub mod constants;
 pub mod audio;
-pub mod vertex;
+pub mod constants;
 pub mod n1ck;
 pub mod tom;
+pub mod vertex;
 
 use alto::Source;
 use luminance::context::GraphicsContext;
@@ -61,10 +61,10 @@ fn main() {
             .unwrap()
             .ignore_warnings();
 
-    let mut stream = audio::init();
+    let (mut stream, toms_samples) = audio::init();
     stream.play();
 
-    let mut tom = Tom::new();
+    let mut tom = Tom::new(toms_samples);
     let mut n1ck = N1ck::new();
 
     let viewports = gen_viewports();

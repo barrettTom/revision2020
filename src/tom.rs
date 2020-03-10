@@ -1,5 +1,3 @@
-use std::f32::consts::PI;
-
 use luminance::context::GraphicsContext;
 use luminance::framebuffer::Framebuffer;
 use luminance::pipeline::PipelineState;
@@ -55,50 +53,30 @@ fn relative(x: f32, in_min: f32, in_max: f32, out_min: f32, out_max: f32) -> f32
     (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
 }
 
-fn gen_sin(start: f32) -> Vec<Vertex> {
-    let mut vertices: Vec<Vertex> = Vec::new();
-
-    let end = start + (2.0 * PI);
-    let mut x = start;
-    while x < end {
-        vertices.push(Vertex {
-            position: VertexPosition::new([relative(x, start, end, -0.9, 0.9), x.sin() * 0.9]),
-            color: VertexRGB::new(constants::C64_GREEN),
-        });
-
-        x += 0.4;
-    }
-
-    vertices
-}
-
 #[derive(Default)]
 pub struct Tom {
     border: Vec<Vec<Vertex>>,
     wave: Vec<Vertex>,
-    last_input: f32,
+    last_x: usize,
+    samples: Vec<i16>,
     tessalations: Vec<Tess>,
 }
 
 impl Tom {
-    pub fn new() -> Tom {
-        let border = gen_border();
-        let wave = gen_sin(0.0);
-        let tessalations = Vec::new();
-
+    pub fn new(samples: Vec<i16>) -> Tom {
         Tom {
-            border,
-            wave,
-            last_input: 0.0,
-            tessalations,
+            samples,
+            border: gen_border(),
+            wave: Vec::new(),
+            last_x: 0,
+            tessalations: Vec::new(),
         }
     }
 
     pub fn update<T: GraphicsContext>(&mut self, mut surface: T) -> T {
         self.tessalations.clear();
 
-        self.last_input += 0.1;
-        self.wave = gen_sin(self.last_input);
+        self.update_wave();
 
         for vertices in self.border.iter() {
             self.tessalations.push(
@@ -143,5 +121,26 @@ impl Tom {
         );
 
         surface
+    }
+
+    fn update_wave(&mut self) {
+        self.wave.clear();
+
+        let start = self.last_x;
+        let end = start + 10;
+
+        let max_y = 200.0;
+        let min_y = -200.0;
+        for x in start..end {
+            self.wave.push(Vertex {
+                position: VertexPosition::new([
+                    relative(x as f32, start as f32, end as f32, -0.9, 0.9),
+                    relative(self.samples[x] as f32, min_y, max_y, -0.9, 0.9),
+                ]),
+                color: VertexRGB::new(constants::C64_GREEN),
+            });
+        }
+
+        self.last_x += 1;
     }
 }
