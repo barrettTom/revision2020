@@ -31,14 +31,14 @@ pub fn init() -> (StreamingSource, Vec<i16>) {
 
         _track_length += samples.len() as f32 / sample_channels;
 
-        samples = samples
-            .into_iter()
-            .enumerate()
-            .filter(|(i, _)| i % 2 == 0)
-            .map(|(_, s)| s)
-            .collect();
-
-        waveform.append(&mut samples);
+        waveform.append(
+            &mut samples
+                .into_iter()
+                .enumerate()
+                .filter(|(i, _)| i % 2 == 0)
+                .map(|(_, s)| s)
+                .collect(),
+        );
     }
 
     (stream, waveform)

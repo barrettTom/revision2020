@@ -141,6 +141,8 @@ impl Tom {
             });
         }
 
+        self.wave.reverse();
+
         self.last_x += constants::SAMPLE_RATE / 60;
     }
 }
