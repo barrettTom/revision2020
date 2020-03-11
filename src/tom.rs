@@ -129,16 +129,27 @@ impl Tom {
         let start = self.last_x;
         let end = start + 3000;
 
+        let mut positions = Vec::new();
+        for x in start..end {
+            positions.push(VertexPosition::new([x as f32, self.waveform[x] as f32]));
+        }
+
+        for position in positions {
+            let color = match position[1].abs() as u32 {
+                0..=50 => VertexRGB::new(constants::C64_BLUE),
+                51..=125 => VertexRGB::new(constants::C64_LIGHT_BLUE),
+                126..=225 => VertexRGB::new(constants::C64_CYAN),
+                _ => VertexRGB::new(constants::C64_GREEN),
+            };
+
+            self.wave.push(Vertex { position, color });
+        }
+
         let max_y = *self.waveform.iter().max().unwrap() as f32;
         let min_y = *self.waveform.iter().min().unwrap() as f32;
-        for x in start..end {
-            self.wave.push(Vertex {
-                position: VertexPosition::new([
-                    relative(x as f32, start as f32, end as f32, -0.9, 0.9),
-                    relative(self.waveform[x] as f32, min_y, max_y, -0.9, 0.9),
-                ]),
-                color: VertexRGB::new(constants::C64_GREEN),
-            });
+        for vertex in self.wave.iter_mut() {
+            vertex.position[0] = relative(vertex.position[0], start as f32, end as f32, -0.9, 0.9);
+            vertex.position[1] = relative(vertex.position[1], max_y, min_y, -0.9, 0.9);
         }
 
         self.wave.reverse();
