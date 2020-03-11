@@ -58,14 +58,14 @@ pub struct Tom {
     border: Vec<Vec<Vertex>>,
     wave: Vec<Vertex>,
     last_x: usize,
-    samples: Vec<i16>,
+    waveform: Vec<i16>,
     tessalations: Vec<Tess>,
 }
 
 impl Tom {
-    pub fn new(samples: Vec<i16>) -> Tom {
+    pub fn new(waveform: Vec<i16>) -> Tom {
         Tom {
-            samples,
+            waveform,
             border: gen_border(),
             wave: Vec::new(),
             last_x: 0,
@@ -127,20 +127,20 @@ impl Tom {
         self.wave.clear();
 
         let start = self.last_x;
-        let end = start + 10;
+        let end = start + 3000;
 
-        let max_y = 200.0;
-        let min_y = -200.0;
+        let max_y = *self.waveform.iter().max().unwrap() as f32;
+        let min_y = *self.waveform.iter().min().unwrap() as f32;
         for x in start..end {
             self.wave.push(Vertex {
                 position: VertexPosition::new([
                     relative(x as f32, start as f32, end as f32, -0.9, 0.9),
-                    relative(self.samples[x] as f32, min_y, max_y, -0.9, 0.9),
+                    relative(self.waveform[x] as f32, min_y, max_y, -0.9, 0.9),
                 ]),
                 color: VertexRGB::new(constants::C64_GREEN),
             });
         }
 
-        self.last_x += 1;
+        self.last_x += constants::SAMPLE_RATE / 60;
     }
 }

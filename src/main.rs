@@ -61,10 +61,10 @@ fn main() {
             .unwrap()
             .ignore_warnings();
 
-    let (mut stream, toms_samples) = audio::init();
+    let (mut stream, waveform) = audio::init();
     stream.play();
 
-    let mut tom = Tom::new(toms_samples);
+    let mut tom = Tom::new(waveform);
     let mut n1ck = N1ck::new();
 
     let viewports = gen_viewports();

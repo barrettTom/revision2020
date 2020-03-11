@@ -19,3 +19,4 @@ pub const C64_LIGHT_BLUE: [u8; 3] = [0, 136, 255];
 pub const C64_LIGHT_GREY: [u8; 3] = [187, 187, 187];
 
 pub const VOLUME: f32 = 0.02;
+pub const SAMPLE_RATE: usize = 44100;
