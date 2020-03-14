@@ -5,11 +5,13 @@ authors = ["Tom Barrett <tom@tombarrett.xyz>"]
 edition = "2018"
 
 [dependencies]
+alto = "3.0.4"
+cgmath = "0.17.0"
+image = "0.22"
+lewton = "0.10.0"
 luminance = "0.39"
 luminance-derive = "0.5.3"
 luminance-glfw = "0.12.1"
-alto = "3.0.4"
-lewton = "0.10.0"
 
 [profile.dev]
 opt-level = 2
