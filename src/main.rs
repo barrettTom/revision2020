@@ -65,7 +65,7 @@ fn main() {
     stream.play();
 
     let mut tom = Tom::new(waveform);
-    let mut n1ck = N1ck::new();
+    let mut n1ck = N1ck::new(&mut surface);
 
     let viewports = gen_viewports();
 
@@ -93,7 +93,7 @@ fn main() {
             if i == 0 || i == 3 {
                 surface = tom.draw(surface, &back_buffer, &program, &pipeline_state);
             } else if i == 1 || i == 2 {
-                surface = n1ck.draw(surface, &back_buffer, &program, &pipeline_state);
+                surface = n1ck.draw(surface, &back_buffer, &pipeline_state);
             }
         }
 
